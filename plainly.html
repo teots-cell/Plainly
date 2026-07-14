@@ -110,14 +110,8 @@
     background:var(--paper-dim);
     padding:36px 20px;
     text-align:center;
-    cursor:pointer;
-    transition:border-color .2s, background .2s;
     position:relative;
     overflow:hidden;
-  }
-  .dropzone:active{
-    background:var(--highlight-soft);
-    border-color:var(--highlight);
   }
   .dropzone .icon{
     font-size:34px;
@@ -132,6 +126,28 @@
   .dropzone .sub{
     font-size:13px;
     color:var(--ink-soft);
+    margin-bottom:20px;
+  }
+  .dz-actions{
+    display:flex;
+    gap:10px;
+  }
+  .dz-btn{
+    flex:1;
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:13px 10px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .dz-btn-secondary{
+    background:transparent;
+    color:var(--ink);
+    border:1.5px solid var(--ink);
   }
   input[type=file]{display:none;}
 
@@ -297,6 +313,7 @@
         <option value="German">DE</option>
         <option value="Italian">IT</option>
         <option value="Portuguese">PT</option>
+        <option value="Polish">PL</option>
         <option value="Lithuanian">LT</option>
         <option value="Russian">RU</option>
         <option value="Turkish">TR</option>
@@ -311,9 +328,14 @@
   <div class="stage">
     <div id="dropzone" class="dropzone">
       <span class="icon">&#128248;</span>
-      <div class="cta">Take a photo or upload</div>
+      <div class="cta">Photograph anything confusing</div>
       <div class="sub">a bill, a form, a menu, a letter — anything</div>
-      <input type="file" id="fileInput" accept="image/*" capture="environment">
+      <div class="dz-actions">
+        <button type="button" class="dz-btn" id="takePhotoBtn">Take photo</button>
+        <button type="button" class="dz-btn dz-btn-secondary" id="uploadBtn">Upload photo</button>
+      </div>
+      <input type="file" id="cameraInput" accept="image/*" capture="environment">
+      <input type="file" id="libraryInput" accept="image/*">
     </div>
 
     <div id="previewWrap" class="preview-wrap" style="display:none;">
@@ -352,7 +374,7 @@ let currentLang = 'English';
 const langSelect = document.getElementById('langSelect');
 const LANG_CODE_MAP = {
   en:'English', el:'Greek', es:'Spanish', fr:'French', de:'German',
-  it:'Italian', pt:'Portuguese', lt:'Lithuanian', ru:'Russian',
+  it:'Italian', pt:'Portuguese', pl:'Polish', lt:'Lithuanian', ru:'Russian',
   tr:'Turkish', ar:'Arabic', zh:'Chinese', ja:'Japanese', hi:'Hindi'
 };
 (function setDefaultLang(){
@@ -370,7 +392,10 @@ langSelect.addEventListener('change', () => {
 });
 
 const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
+const takePhotoBtn = document.getElementById('takePhotoBtn');
+const uploadBtn = document.getElementById('uploadBtn');
+const cameraInput = document.getElementById('cameraInput');
+const libraryInput = document.getElementById('libraryInput');
 const previewWrap = document.getElementById('previewWrap');
 const previewImg = document.getElementById('previewImg');
 const retakeBtn = document.getElementById('retakeBtn');
@@ -381,10 +406,10 @@ const result = document.getElementById('result');
 const resultText = document.getElementById('resultText');
 const errorBox = document.getElementById('errorBox');
 
-dropzone.addEventListener('click', () => fileInput.click());
+takePhotoBtn.addEventListener('click', () => cameraInput.click());
+uploadBtn.addEventListener('click', () => libraryInput.click());
 
-fileInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
+function handleFile(file){
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
@@ -400,7 +425,10 @@ fileInput.addEventListener('change', (e) => {
     errorBox.classList.remove('show');
   };
   reader.readAsDataURL(file);
-});
+}
+
+cameraInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+libraryInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
 
 retakeBtn.addEventListener('click', () => {
   currentImageBase64 = null;
@@ -409,7 +437,8 @@ retakeBtn.addEventListener('click', () => {
   explainBtn.style.display = 'none';
   chips.style.display = 'none';
   result.classList.remove('show');
-  fileInput.value = '';
+  cameraInput.value = '';
+  libraryInput.value = '';
 });
 
 chips.addEventListener('click', (e) => {
