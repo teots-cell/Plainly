@@ -1,5 +1,5 @@
 const CACHE = 'plainly-v1';
-const SHELL = ['./plainly.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const SHELL = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
