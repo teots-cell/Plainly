@@ -2,7 +2,7 @@
   "name": "Plainly — explain this",
   "short_name": "Plainly",
   "description": "Point your camera at anything confusing and get it explained in plain language, in your own language.",
-  "start_url": "./plainly.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#FAFAF6",
   "theme_color": "#1B2430",
